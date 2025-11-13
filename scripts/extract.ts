@@ -65,6 +65,15 @@ async function processZipFile(zipPath: string, outputDir: string): Promise<void>
 
         // Extract file to output directory
         const extractedPath = join(outputDir, fileName)
+        const outputTextFile = join(outputDir, `${zipName}_${fileName}.txt`)
+
+        // Skip if already processed (resume capability)
+        if (existsSync(outputTextFile)) {
+          console.log(`⊙ Skipping (already processed): ${outputTextFile}`)
+          entry.autodrain()
+          return
+        }
+
         const extractedDir = extractedPath.substring(0, extractedPath.lastIndexOf('/'))
 
         if (!existsSync(extractedDir)) {
@@ -75,7 +84,6 @@ async function processZipFile(zipPath: string, outputDir: string): Promise<void>
           await pipeline(entry, createWriteStream(extractedPath))
 
           // Run OCR on extracted file
-          const outputTextFile = join(outputDir, `${zipName}_${fileName}.txt`)
           processFile(extractedPath, outputTextFile)
         } catch (err) {
           console.error(`Failed to extract ${fileName}:`, err)
@@ -88,6 +96,12 @@ async function processZipFile(zipPath: string, outputDir: string): Promise<void>
 }
 
 export function processFile(inputPath: string, outputPath: string): void {
+  // Skip if already processed (resume capability)
+  if (existsSync(outputPath)) {
+    console.log(`⊙ Skipping (already processed): ${outputPath}`)
+    return
+  }
+
   try {
     // Use OCRmyPDF with quality-enhancing options:
     // --force-ocr: Force OCR on all images
