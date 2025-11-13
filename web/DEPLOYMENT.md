@@ -45,17 +45,30 @@
 #### Option 2: Vercel Dashboard
 
 1. **Go to Vercel Dashboard**: https://vercel.com
-2. **Switch to Volume team** in the team selector (top-left)
+
+2. **Switch to Volume team**
+   - Click the team selector in the top-left corner
+   - Select "Volume" from the dropdown
+
 3. **Import Project**:
-   - Click "Add New..." → "Project"
-   - Import from GitHub: `taariq/epstein-files-micropayments`
+   - Click "Add New..." button (top-right)
+   - Select "Project" from the dropdown
+   - Click "Import" next to your GitHub repository
+   - Search for or select: `epstein-files-micropayments`
+   - If you don't see it, you may need to configure GitHub permissions first
+
 4. **Configure Project**:
-   - Framework Preset: **Vite**
-   - Root Directory: **web**
-   - Build Command: `pnpm build`
-   - Output Directory: `dist`
-   - Install Command: `pnpm install`
+   - **Project Name**: `epstein-files-micropayments` (or customize)
+   - **Framework Preset**: Vite (should auto-detect)
+   - **Root Directory**: `web` ← IMPORTANT: Change from default `.`
+   - **Build Command**: `pnpm build` (default should be fine)
+   - **Output Directory**: `dist` (default should be fine)
+   - **Install Command**: `pnpm install` (default should be fine)
+
 5. **Deploy**
+   - Click "Deploy" button
+   - Wait for build to complete (~1-2 minutes)
+   - Visit your deployment URL
 
 ### Environment Variables
 
