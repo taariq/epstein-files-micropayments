@@ -127,6 +127,112 @@ a:hover {
   font-size: 0.9rem;
 }
 
+/* Setup Guide Styles */
+.setup-guide {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.setup-guide .intro {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #f0f4ff;
+  border-left: 4px solid #667eea;
+  border-radius: 4px;
+}
+
+.setup-section {
+  margin-bottom: 3rem;
+}
+
+.steps-list {
+  margin-top: 1.5rem;
+}
+
+.step-item {
+  margin-bottom: 2rem;
+}
+
+.step-item h4 {
+  color: #667eea;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.code-block {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  padding: 1.5rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.code-block code {
+  display: block;
+  white-space: pre;
+}
+
+.prompt-example {
+  background: #2d2d2d;
+  border-left: 4px solid #667eea;
+}
+
+.schema-table {
+  margin-bottom: 1.5rem;
+}
+
+.schema-table h4 {
+  color: #764ba2;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  font-family: monospace;
+}
+
+.example-query {
+  margin-bottom: 2rem;
+}
+
+.example-query h4 {
+  color: #555;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.note {
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border-radius: 4px;
+}
+
+.troubleshooting {
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+.faq-item {
+  margin-bottom: 1.5rem;
+}
+
+.faq-item h4 {
+  color: #d9534f;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.faq-item p {
+  margin-bottom: 0;
+}
+
 @media (max-width: 768px) {
   .hero h1 {
     font-size: 2rem;
@@ -142,5 +248,10 @@ a:hover {
 
   section {
     padding: 1.5rem;
+  }
+
+  .code-block {
+    padding: 1rem;
+    font-size: 0.85rem;
   }
 }
