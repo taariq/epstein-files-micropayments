@@ -27,7 +27,7 @@ describe('Document Extraction', () => {
       rmSync(nonExistentDir, { recursive: true })
     }
 
-    extractDocuments('../uploads', nonExistentDir, { dryRun: true })
+    extractDocuments('./uploads', nonExistentDir, { dryRun: true })
     expect(existsSync(nonExistentDir)).toBe(true)
 
     // Cleanup
@@ -35,7 +35,7 @@ describe('Document Extraction', () => {
   })
 
   it('should find zip files in source directory', () => {
-    const zipFiles = extractDocuments('../uploads', testOutputDir, { dryRun: true })
+    const zipFiles = extractDocuments('./uploads', testOutputDir, { dryRun: true })
     expect(zipFiles.length).toBeGreaterThan(0)
     expect(zipFiles.every(f => f.endsWith('.zip'))).toBe(true)
   })
