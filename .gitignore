@@ -4,6 +4,10 @@ CLAUDE.md
 # Epstein Files - source documents not to be pushed to repo
 docs/Epstein_Files/
 
+# Processed files and backups
+extracted/
+backups/
+
 # Environment variables
 .env
 .env.local

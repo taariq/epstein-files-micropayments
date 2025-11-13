@@ -1,0 +1,20 @@
+{
+  "name": "epstein-files-micropayments",
+  "version": "1.0.0",
+  "description": "Query Epstein Files documents using AI agents with micropayments",
+  "private": true,
+  "packageManager": "pnpm@10.22.0",
+  "scripts": {
+    "extract": "tsx scripts/extract.ts",
+    "upload": "tsx scripts/upload.ts",
+    "backup": "tsx scripts/backup.ts",
+    "register": "tsx scripts/register-provider.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "keywords": ["micropayments", "x402", "serendb", "mcp", "ai-agents"],
+  "author": "",
+  "license": "MIT"
+}
