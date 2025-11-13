@@ -32,7 +32,7 @@ describe('Database Backup', () => {
     const result = await createBackup({ outputDir: testBackupDir })
 
     expect(result.success).toBe(true)
-    expect(result.filename).toMatch(/^epstein-db-\d{8}-\d{6}\.sql$/)
+    expect(result.filename).toMatch(/^documents-db-\d{8}-\d{6}\.sql$/)
     expect(existsSync(join(testBackupDir, result.filename))).toBe(true)
   })
 

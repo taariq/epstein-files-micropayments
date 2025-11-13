@@ -45,7 +45,7 @@ export async function createBackup(options: BackupOptions = {}): Promise<BackupR
   const second = String(now.getSeconds()).padStart(2, '0')
   const timestamp = `${year}${month}${day}-${hour}${minute}${second}`
 
-  const filename = `epstein-db-${timestamp}.sql`
+  const filename = `documents-db-${timestamp}.sql`
   const filepath = join(outputDir, filename)
 
   try {
