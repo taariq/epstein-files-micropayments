@@ -21,21 +21,21 @@ describe('Document Extraction', () => {
     }
   })
 
-  it('should create output directory if it does not exist', () => {
+  it('should create output directory if it does not exist', async () => {
     const nonExistentDir = './test-new-dir'
     if (existsSync(nonExistentDir)) {
       rmSync(nonExistentDir, { recursive: true })
     }
 
-    extractDocuments('./uploads', nonExistentDir, { dryRun: true })
+    await extractDocuments('./uploads', nonExistentDir, { dryRun: true })
     expect(existsSync(nonExistentDir)).toBe(true)
 
     // Cleanup
     rmSync(nonExistentDir, { recursive: true })
   })
 
-  it('should find zip files in source directory', () => {
-    const zipFiles = extractDocuments('./uploads', testOutputDir, { dryRun: true })
+  it('should find zip files in source directory', async () => {
+    const zipFiles = await extractDocuments('./uploads', testOutputDir, { dryRun: true })
     expect(zipFiles.length).toBeGreaterThan(0)
     expect(zipFiles.every(f => f.endsWith('.zip'))).toBe(true)
   })

@@ -1,20 +1,21 @@
 // ABOUTME: Extracts documents from ZIP archives and runs OCR processing
 // ABOUTME: Outputs extracted text to cached directory for upload
 
-import { readdirSync, existsSync, mkdirSync, writeFileSync } from 'fs'
+import { readdirSync, existsSync, mkdirSync, createReadStream, createWriteStream } from 'fs'
 import { join } from 'path'
 import { execSync } from 'child_process'
-import AdmZip from 'adm-zip'
+import { Parse } from 'unzipper'
+import { pipeline } from 'stream/promises'
 
 export interface ExtractOptions {
   dryRun?: boolean
 }
 
-export function extractDocuments(
+export async function extractDocuments(
   sourceDir: string,
   outputDir: string,
   options: ExtractOptions = {}
-): string[] {
+): Promise<string[]> {
   // Create output directory if it doesn't exist
   if (!existsSync(outputDir)) {
     mkdirSync(outputDir, { recursive: true })
@@ -32,30 +33,58 @@ export function extractDocuments(
   // Process each zip file
   for (const zipPath of zipFiles) {
     console.log(`Processing ${zipPath}...`)
-    processZipFile(zipPath, outputDir)
+    await processZipFile(zipPath, outputDir)
   }
 
   return zipFiles
 }
 
-function processZipFile(zipPath: string, outputDir: string): void {
+async function processZipFile(zipPath: string, outputDir: string): Promise<void> {
   const zipName = zipPath.split('/').pop()!.replace('.zip', '')
-  const zip = new AdmZip(zipPath)
-  const zipEntries = zip.getEntries()
 
-  for (const entry of zipEntries) {
-    if (entry.isDirectory) continue
+  return new Promise((resolve, reject) => {
+    createReadStream(zipPath)
+      .pipe(Parse())
+      .on('entry', async (entry) => {
+        const fileName = entry.path
+        const type = entry.type // 'Directory' or 'File'
 
-    // Extract to temp location
-    const tempFile = join(outputDir, `temp_${entry.entryName}`)
-    zip.extractEntryTo(entry, outputDir, false, true)
+        if (type === 'Directory') {
+          entry.autodrain()
+          return
+        }
 
-    // Run OCR based on file type
-    if (entry.entryName.endsWith('.pdf') || entry.entryName.endsWith('.jpg') || entry.entryName.endsWith('.png')) {
-      const outputTextFile = join(outputDir, `${zipName}_${entry.entryName}.txt`)
-      processFile(join(outputDir, entry.entryName), outputTextFile)
-    }
-  }
+        // Only process PDF and image files
+        const isPdf = fileName.endsWith('.pdf')
+        const isImage = fileName.endsWith('.jpg') || fileName.endsWith('.png')
+
+        if (!isPdf && !isImage) {
+          entry.autodrain()
+          return
+        }
+
+        // Extract file to output directory
+        const extractedPath = join(outputDir, fileName)
+        const extractedDir = extractedPath.substring(0, extractedPath.lastIndexOf('/'))
+
+        if (!existsSync(extractedDir)) {
+          mkdirSync(extractedDir, { recursive: true })
+        }
+
+        try {
+          await pipeline(entry, createWriteStream(extractedPath))
+
+          // Run OCR on extracted file
+          const outputTextFile = join(outputDir, `${zipName}_${fileName}.txt`)
+          processFile(extractedPath, outputTextFile)
+        } catch (err) {
+          console.error(`Failed to extract ${fileName}:`, err)
+          entry.autodrain()
+        }
+      })
+      .on('finish', () => resolve())
+      .on('error', (err) => reject(err))
+  })
 }
 
 export function processFile(inputPath: string, outputPath: string): void {
@@ -75,6 +104,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const outputDir = process.argv[3] || './extracted'
 
   console.log('Starting document extraction...')
-  const processed = extractDocuments(sourceDir, outputDir)
+  const processed = await extractDocuments(sourceDir, outputDir)
   console.log(`\nCompleted! Processed ${processed.length} archives.`)
 }
