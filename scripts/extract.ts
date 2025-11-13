@@ -89,8 +89,9 @@ async function processZipFile(zipPath: string, outputDir: string): Promise<void>
 
 export function processFile(inputPath: string, outputPath: string): void {
   try {
-    // Use OCRmyPDF to extract text
-    const command = `ocrmypdf --force-ocr --skip-text "${inputPath}" - | pdftotext - "${outputPath}"`
+    // Use OCRmyPDF with --force-ocr and --sidecar to extract text directly
+    // This eliminates the need for pdftotext dependency
+    const command = `ocrmypdf --force-ocr --sidecar "${outputPath}" "${inputPath}" /dev/null`
     execSync(command, { stdio: 'pipe' })
     console.log(`✓ Extracted: ${outputPath}`)
   } catch (error) {
