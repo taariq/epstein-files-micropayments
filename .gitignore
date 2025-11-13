@@ -1,0 +1,24 @@
+# Claude Code guidance file (user-specific)
+CLAUDE.md
+
+# Epstein Files - source documents not to be pushed to repo
+docs/Epstein_Files/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# OS files
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
