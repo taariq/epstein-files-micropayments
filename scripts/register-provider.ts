@@ -79,9 +79,9 @@ export async function configurePricing(): Promise<void> {
     return
   }
 
-  // Micropayment pricing: $0.001 per 1000 rows ($0.000001 per row)
+  // Micropayment pricing: $0.01 per 1000 rows ($0.00001 per row)
   const pricing: PricingConfig = {
-    basePricePer1000Rows: 0.001,
+    basePricePer1000Rows: 0.01,
     markupMultiplier: 1.5
   }
 
