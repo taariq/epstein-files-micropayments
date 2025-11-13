@@ -255,3 +255,252 @@ a:hover {
     font-size: 0.85rem;
   }
 }
+
+/* Demo Query Component Styles */
+.demo-query {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.demo-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.demo-header h2 {
+  color: #667eea;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.demo-intro {
+  color: #666;
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.query-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.query-textarea {
+  font-family: 'Courier New', Courier, monospace;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.input-hint {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+}
+
+.example-queries {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.example-label {
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.example-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.example-button {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+}
+
+.example-button:hover {
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+
+.execute-button {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.execute-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.execute-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.result-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.result-section h3 {
+  color: #667eea;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.loading-section {
+  text-align: center;
+  color: #667eea;
+  font-style: italic;
+}
+
+.error-section {
+  border-left: 4px solid #d9534f;
+}
+
+.error-section h3 {
+  color: #d9534f;
+}
+
+.error-section p {
+  color: #d9534f;
+  font-weight: 500;
+}
+
+.payment-section {
+  border-left: 4px solid #ffc107;
+  background: #fffbf0;
+}
+
+.payment-section h3 {
+  color: #f57c00;
+}
+
+.payment-link {
+  display: inline-block;
+  margin: 1rem 0;
+  padding: 0.75rem 1.5rem;
+  background: #ffc107;
+  color: #333;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.payment-link:hover {
+  background: #f57c00;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+}
+
+.payment-info {
+  font-size: 0.9rem;
+  color: #666;
+  font-style: italic;
+}
+
+.success-section {
+  border-left: 4px solid #5cb85c;
+}
+
+.success-section h3 {
+  color: #5cb85c;
+}
+
+.result-count {
+  color: #555;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.result-table-container {
+  overflow-x: auto;
+  background: #1e1e1e;
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.result-data {
+  margin: 0;
+  color: #d4d4d4;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+@media (max-width: 768px) {
+  .demo-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .demo-intro {
+    font-size: 1rem;
+  }
+
+  .query-form {
+    padding: 1.5rem;
+  }
+
+  .example-buttons {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+}
