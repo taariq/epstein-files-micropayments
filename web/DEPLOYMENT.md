@@ -1,11 +1,15 @@
 # Deployment Guide - Epstein Files Web App
 
-## Deploying to Vercel (Volume Team)
+## Deploying to Vercel
+
+This is an open-source project. Anyone can deploy their own instance to Vercel (or any static hosting provider).
+
+**Official deployment:** The canonical production deployment is maintained by the Volume team at Vercel.
 
 ### Prerequisites
-- Vercel account with access to the **Volume team**
+- Vercel account (free tier works fine)
 - Vercel CLI installed: `npm install -g vercel`
-- GitHub repository connected to Vercel
+- GitHub repository (fork or original)
 
 ### Deployment Steps
 
@@ -26,13 +30,15 @@
    cd web
    ```
 
-4. **Deploy to Volume team**:
+4. **Deploy to production**:
    ```bash
-   vercel --prod --scope volume
+   vercel --prod
    ```
 
+   **Note for Volume team maintainers:** Use `vercel --prod --scope volume` to deploy to the official team account.
+
 5. **Follow the prompts**:
-   - Link to existing project or create new? → **Create new**
+   - Link to existing project or create new? → **Create new** (for first deployment)
    - Project name: **epstein-files-micropayments** (or your preferred name)
    - Which directory contains code? → **.** (current directory)
    - Want to override settings? → **No**
@@ -46,24 +52,25 @@
 
 1. **Go to Vercel Dashboard**: https://vercel.com
 
-2. **Switch to Volume team**
-   - Click the team selector in the top-left corner
-   - Select "Volume" from the dropdown
+2. **Select account/team** (optional)
+   - If you have multiple teams, select your desired account from the team selector (top-left)
+   - **Volume team maintainers:** Select "Volume" for official deployment
 
 3. **Import Project**:
    - Click "Add New..." button (top-right)
    - Select "Project" from the dropdown
-   - Click "Import" next to your GitHub repository
-   - Search for or select: `epstein-files-micropayments`
-   - If you don't see it, you may need to configure GitHub permissions first
+   - Connect to your GitHub account if not already connected
+   - Search for: `epstein-files-micropayments` (or your fork)
+   - Click "Import" on the repository
+   - If you don't see it, configure GitHub App permissions to allow access
 
 4. **Configure Project**:
    - **Project Name**: `epstein-files-micropayments` (or customize)
    - **Framework Preset**: Vite (should auto-detect)
-   - **Root Directory**: `web` ← IMPORTANT: Change from default `.`
-   - **Build Command**: `pnpm build` (default should be fine)
-   - **Output Directory**: `dist` (default should be fine)
-   - **Install Command**: `pnpm install` (default should be fine)
+   - **Root Directory**: `web` ← **IMPORTANT:** Change from default `.`
+   - **Build Command**: `pnpm build` (default is fine)
+   - **Output Directory**: `dist` (default is fine)
+   - **Install Command**: `pnpm install` (default is fine)
 
 5. **Deploy**
    - Click "Deploy" button
@@ -94,7 +101,7 @@ Test the following on the production URL:
 Once connected to GitHub:
 - Pushes to `main` branch trigger automatic production deployments
 - Pull requests create preview deployments
-- All deployments go to the Volume team
+- Configure branch settings in Vercel project settings if needed
 
 ### Custom Domain (Optional)
 
@@ -121,6 +128,7 @@ To add a custom domain:
 ### Deployment URLs
 
 After deployment, your app will be available at:
-- **Production**: `https://epstein-files-micropayments.vercel.app` (or custom URL)
-- **Team**: Volume team on Vercel
-- **Preview**: Automatic preview URLs for pull requests
+- **Production**: `https://your-project-name.vercel.app` (or custom domain)
+- **Preview**: Automatic preview URLs for pull requests (format: `https://your-project-name-git-branch-username.vercel.app`)
+
+**Official deployment:** The canonical instance is maintained at the Volume team's Vercel account.
