@@ -112,14 +112,18 @@ const SetupGuide: Component = () => {
                     ],
                     "env": {
                       "X402_GATEWAY_URL": "https://x402.serendb.com",
-                      "X402_PROVIDER_ID": "4d06389d-32f1-4e4a-a30a-06e783c20c3c",
-                      "X402_API_KEY": "seren_live_9a2b6c46057179339b9045f4c5e5ecc7"
+                      "X402_PROVIDER_ID": "your-provider-id-here",
+                      "X402_API_KEY": "your-api-key-here"
                     }
                   }
                 }
               }, null, 2)}
             </code>
           </div>
+          <p class="credential-note">
+            <strong>Important:</strong> Replace <code>your-provider-id-here</code> and <code>your-api-key-here</code> with your actual x402 provider credentials.
+            To obtain these, you need to register as a provider with the x402 gateway. See the repository README for registration instructions.
+          </p>
         </div>
 
         <div class="step-item">

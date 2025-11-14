@@ -77,8 +77,8 @@ const LandingPage: Component = () => {
       ],
       "env": {
         "X402_GATEWAY_URL": "https://x402.serendb.com",
-        "X402_PROVIDER_ID": "4d06389d-32f1-4e4a-a30a-06e783c20c3c",
-        "X402_API_KEY": "seren_live_9a2b6c46057179339b9045f4c5e5ecc7"
+        "X402_PROVIDER_ID": "your-provider-id-here",
+        "X402_API_KEY": "your-api-key-here"
       }
     }
   }
@@ -86,6 +86,10 @@ const LandingPage: Component = () => {
             <p class="config-location">
               Add this to: <code>~/Library/Application Support/Claude/claude_desktop_config.json</code> (macOS)
               or <code>%APPDATA%/Claude/claude_desktop_config.json</code> (Windows)
+            </p>
+            <p class="config-note">
+              <strong>Note:</strong> Replace <code>your-provider-id-here</code> and <code>your-api-key-here</code> with your x402 provider credentials.
+              If you're running your own instance, get these by registering at the x402 gateway. See the <a href="https://github.com/taariq/scan-files-to-serenai-micropayments#setup">setup guide</a> for details.
             </p>
           </div>
         </div>
