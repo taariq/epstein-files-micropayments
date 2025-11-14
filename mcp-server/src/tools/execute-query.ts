@@ -74,7 +74,7 @@ export function createExecuteQueryHandler(client: X402Client) {
       }
 
       // Execute query through x402 client
-      const result: QueryResult = await client.executeQuery(input.query)
+      const result: QueryResult = await client.executeQuery(input.query, input.walletAddress)
 
       // Handle successful execution
       if (result.success) {

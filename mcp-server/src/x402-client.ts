@@ -63,7 +63,7 @@ export class X402Client {
     }
   }
 
-  async executeQuery(query: string): Promise<QueryResult> {
+  async executeQuery(query: string, agentWallet: string): Promise<QueryResult> {
     try {
       // Validate query before sending
       this.validateQuery(query)
@@ -82,7 +82,11 @@ export class X402Client {
           'Authorization': `Bearer ${this.apiKey}`,
           'X-Provider-ID': this.providerId
         },
-        body: JSON.stringify({ query })
+        body: JSON.stringify({
+          sql: query,
+          agentWallet: agentWallet,
+          providerId: this.providerId
+        })
       })
 
       if (response.ok) {
