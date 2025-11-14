@@ -18,6 +18,15 @@ export interface QueryResult {
   error?: string
 }
 
+export interface BalanceResult {
+  success: boolean
+  agentWallet?: string
+  providerId?: string
+  balance?: string
+  updatedAt?: string | null
+  error?: string
+}
+
 const FORBIDDEN_OPERATIONS = [
   'DROP',
   'DELETE',
@@ -111,6 +120,43 @@ export class X402Client {
       }
 
       // Handle other HTTP errors
+      const errorText = await response.text()
+      return {
+        success: false,
+        error: `Gateway error (${response.status}): ${errorText}`
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
+      }
+    }
+  }
+
+  async getBalance(agentWallet: string): Promise<BalanceResult> {
+    try {
+      const response = await fetch(
+        `${this.gatewayUrl}/api/balance/${agentWallet}/${this.providerId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${this.apiKey}`,
+            'X-Provider-ID': this.providerId
+          }
+        }
+      )
+
+      if (response.ok) {
+        const data = await response.json()
+        return {
+          success: true,
+          agentWallet: data.agentWallet,
+          providerId: data.providerId,
+          balance: data.balance,
+          updatedAt: data.updatedAt
+        }
+      }
+
       const errorText = await response.text()
       return {
         success: false,
