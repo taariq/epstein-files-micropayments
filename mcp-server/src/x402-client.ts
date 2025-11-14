@@ -1,5 +1,5 @@
 // ABOUTME: HTTP client for x402 gateway API with micropayment support
-// ABOUTME: Handles query validation, execution, and payment flow integration
+// ABOUTME: Handles query validation, payment requests, and verified query execution
 
 export interface X402Config {
   gatewayUrl: string
@@ -11,10 +11,16 @@ export interface QueryResult {
   success: boolean
   rows?: any[]
   rowCount?: number
-  cost?: number
+  estimatedCost?: string
+  actualCost?: string
+  executionTime?: number
+  paymentId?: string
   paymentRequired?: boolean
-  paymentUrl?: string
-  estimatedCost?: number
+  // Payment request details (when 402 response)
+  minimumPayment?: string
+  gatewayWallet?: string
+  expiresAt?: string | null
+  message?: string
   error?: string
 }
 
@@ -72,7 +78,17 @@ export class X402Client {
     }
   }
 
-  async executeQuery(query: string, agentWallet: string): Promise<QueryResult> {
+  /**
+   * Execute query with x402 payment protocol
+   * If payment is not provided, returns 402 with payment details
+   * If payment is provided, verifies and executes query
+   */
+  async executeQuery(
+    query: string,
+    agentWallet: string,
+    paymentId?: string,
+    txHash?: string
+  ): Promise<QueryResult> {
     try {
       // Validate query before sending
       this.validateQuery(query)
@@ -84,6 +100,18 @@ export class X402Client {
     }
 
     try {
+      const body: any = {
+        sql: query,
+        agentWallet: agentWallet,
+        providerId: this.providerId
+      }
+
+      // Add payment details if provided
+      if (paymentId && txHash) {
+        body.paymentId = paymentId
+        body.txHash = txHash
+      }
+
       const response = await fetch(`${this.gatewayUrl}/api/query`, {
         method: 'POST',
         headers: {
@@ -91,11 +119,7 @@ export class X402Client {
           'Authorization': `Bearer ${this.apiKey}`,
           'X-Provider-ID': this.providerId
         },
-        body: JSON.stringify({
-          sql: query,
-          agentWallet: agentWallet,
-          providerId: this.providerId
-        })
+        body: JSON.stringify(body)
       })
 
       if (response.ok) {
@@ -104,7 +128,10 @@ export class X402Client {
           success: true,
           rows: data.rows,
           rowCount: data.rowCount,
-          cost: data.cost
+          estimatedCost: data.estimatedCost,
+          actualCost: data.actualCost,
+          executionTime: data.executionTime,
+          paymentId: data.paymentId
         }
       }
 
@@ -114,16 +141,20 @@ export class X402Client {
         return {
           success: false,
           paymentRequired: true,
-          paymentUrl: data.paymentUrl,
-          estimatedCost: data.estimatedCost
+          paymentId: data.paymentId,
+          estimatedCost: data.estimatedCost,
+          minimumPayment: data.minimumPayment,
+          gatewayWallet: data.gatewayWallet,
+          expiresAt: data.expiresAt,
+          message: data.message
         }
       }
 
       // Handle other HTTP errors
-      const errorText = await response.text()
+      const errorData = await response.json().catch(() => ({ error: response.statusText }))
       return {
         success: false,
-        error: `Gateway error (${response.status}): ${errorText}`
+        error: `Gateway error (${response.status}): ${errorData.error || response.statusText}`
       }
     } catch (error) {
       return {
