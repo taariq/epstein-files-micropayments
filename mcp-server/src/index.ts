@@ -11,8 +11,6 @@ import {
 import dotenv from 'dotenv'
 import { X402Client } from './x402-client.js'
 import { executeQueryTool, createExecuteQueryHandler } from './tools/execute-query.js'
-import { checkBalanceTool, createCheckBalanceHandler } from './tools/check-balance.js'
-import { depositInstructionsTool, createDepositInstructionsHandler } from './tools/deposit-instructions.js'
 
 // Load environment variables
 dotenv.config()
@@ -30,13 +28,20 @@ for (const varName of requiredEnvVars) {
 const x402Client = new X402Client({
   gatewayUrl: process.env.X402_GATEWAY_URL!,
   providerId: process.env.X402_PROVIDER_ID!,
-  apiKey: process.env.X402_API_KEY!
+  apiKey: process.env.X402_API_KEY!,
+  agentPrivateKey: process.env.AGENT_PRIVATE_KEY
 })
+
+// Warn if agent private key not configured
+if (!process.env.AGENT_PRIVATE_KEY) {
+  console.error('⚠️  AGENT_PRIVATE_KEY not set - queries will require manual payment signing')
+  console.error('   Set AGENT_PRIVATE_KEY in .env or Claude Desktop config to enable automatic payments')
+} else {
+  console.error('✓ Agent wallet configured for automatic EIP-3009 payment signing')
+}
 
 // Create tool handlers
 const executeQueryHandler = createExecuteQueryHandler(x402Client)
-const checkBalanceHandler = createCheckBalanceHandler(x402Client)
-const depositInstructionsHandler = createDepositInstructionsHandler(process.env.PROVIDER_WALLET_ADDRESS!)
 
 // Create MCP server
 const server = new Server(
@@ -54,7 +59,7 @@ const server = new Server(
 // Register tool handlers
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
-    tools: [executeQueryTool, checkBalanceTool, depositInstructionsTool],
+    tools: [executeQueryTool],
   }
 })
 
@@ -65,12 +70,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   switch (toolName) {
     case 'execute_query':
       result = await executeQueryHandler(request.params.arguments as any)
-      break
-    case 'check_balance':
-      result = await checkBalanceHandler(request.params.arguments as any)
-      break
-    case 'get_deposit_instructions':
-      result = await depositInstructionsHandler(request.params.arguments as any)
       break
     default:
       throw new Error(`Unknown tool: ${toolName}`)

@@ -1,7 +1,7 @@
 // ABOUTME: MCP tool for executing SQL queries on document databases
 // ABOUTME: Handles micropayment flows and returns formatted results to LLMs
 
-import { X402Client, QueryResult } from '../x402-client'
+import { X402Client, QueryResult, PaymentRequirementsResponse, SettlementResponse } from '../x402-client'
 
 export interface ExecuteQueryInput {
   query: string
@@ -15,9 +15,11 @@ export interface ExecuteQueryResult {
     rowCount: number
     cost: number
     summary: string
+    settlement?: SettlementResponse
+    paymentSource?: 'payment' | 'credit'
   }
   paymentRequired?: boolean
-  paymentUrl?: string
+  paymentRequirements?: PaymentRequirementsResponse
   estimatedCost?: number
   message?: string
   error?: string
@@ -79,27 +81,46 @@ export function createExecuteQueryHandler(client: X402Client) {
       // Handle successful execution
       if (result.success) {
         const actualCost = parseFloat(result.actualCost || '0')
-        const summary = `Query returned ${result.rowCount} rows. Cost: $${actualCost.toFixed(6)}`
+        let summary = `Query returned ${result.rowCount} rows. Cost: $${actualCost.toFixed(6)}`
+
+        // Add payment source info
+        if (result.paymentSource === 'credit') {
+          summary += ' (paid with credit from previous failed query)'
+        } else if (result.settlement) {
+          summary += ` (settlement: ${result.settlement.transaction})`
+        }
+
         return {
           success: true,
           data: {
             rows: result.rows || [],
             rowCount: result.rowCount || 0,
             cost: actualCost,
-            summary
+            summary,
+            settlement: result.settlement,
+            paymentSource: result.paymentSource
           }
         }
       }
 
       // Handle payment required
-      if (result.paymentRequired) {
-        const estimatedCost = parseFloat(result.estimatedCost || '0')
-        const paymentUrl = `${process.env.X402_GATEWAY_URL}/payment/${result.paymentId}`
-        const message = `Payment required to execute this query. Estimated cost: $${estimatedCost.toFixed(6)}. Please complete payment at: ${paymentUrl}`
+      if (result.paymentRequired && result.paymentRequirements) {
+        const requirement = result.paymentRequirements.accepts[0]
+        const estimatedCost = parseFloat(requirement?.extra?.estimatedCost || '0')
+        const availableCredit = parseFloat(requirement?.extra?.availableCredit || '0')
+        const amountDue = parseFloat(requirement?.extra?.amountDue || '0')
+
+        let message = result.message || `Payment required to execute this query. Estimated cost: $${estimatedCost.toFixed(6)}`
+
+        if (availableCredit > 0) {
+          message += `\nAvailable credit: $${availableCredit.toFixed(6)}`
+          message += `\nAmount due: $${amountDue.toFixed(6)}`
+        }
+
         return {
           success: false,
           paymentRequired: true,
-          paymentUrl,
+          paymentRequirements: result.paymentRequirements,
           estimatedCost,
           message
         }
