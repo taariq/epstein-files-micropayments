@@ -24,8 +24,8 @@ const DemoQuery: Component = () => {
 
   const exampleQueries = [
     "SELECT * FROM documents LIMIT 10",
-    "SELECT * FROM pages WHERE content ILIKE '%keyword%' LIMIT 5",
-    "SELECT document_filename, COUNT(*) as page_count FROM pages GROUP BY document_filename",
+    "SELECT * FROM pages WHERE content_text ILIKE '%keyword%' LIMIT 5",
+    "SELECT d.source_file, COUNT(*) as page_count FROM pages p JOIN documents d ON p.document_id = d.id GROUP BY d.source_file",
     "SELECT * FROM documents WHERE source_file LIKE '%.pdf'"
   ]
 
