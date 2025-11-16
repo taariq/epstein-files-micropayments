@@ -27,6 +27,8 @@ const DemoQuery: Component = () => {
   const [result, setResult] = createSignal<QueryResult | null>(null)
   const [paymentRequired, setPaymentRequired] = createSignal<PaymentRequired | null>(null)
   const [costEstimate, setCostEstimate] = createSignal<CostEstimate | null>(null)
+  const [lastEstimatedQuery, setLastEstimatedQuery] = createSignal<string | null>(null)
+  const [showConfirmation, setShowConfirmation] = createSignal(false)
   const [error, setError] = createSignal<string | null>(null)
 
   const exampleQueries = [
@@ -39,9 +41,36 @@ const DemoQuery: Component = () => {
   // Pricing: $0.01 per 1000 rows
   const PRICE_PER_1000_ROWS = 0.01
 
-  const estimateCost = async () => {
-    setEstimating(true)
+  const executeButtonLabel = () => {
+    if (loading()) {
+      return 'Executing...'
+    }
+
+    if (estimating()) {
+      return 'Preparing Estimate...'
+    }
+
+    if (showConfirmation()) {
+      return 'Awaiting Confirmation'
+    }
+
+    return 'Execute Query'
+  }
+
+  const resetEstimateState = () => {
     setCostEstimate(null)
+    setLastEstimatedQuery(null)
+    setShowConfirmation(false)
+  }
+
+  const estimateCost = async (): Promise<boolean> => {
+    if (!query()) {
+      setError('Enter a SQL query before estimating cost')
+      return false
+    }
+
+    setEstimating(true)
+    resetEstimateState()
     setError(null)
 
     try {
@@ -64,12 +93,16 @@ const DemoQuery: Component = () => {
           estimatedRows,
           estimatedCost
         })
+        setLastEstimatedQuery(query())
+        return true
       } else {
         const errorData = await response.json()
         setError(errorData.error || `Error estimating cost: ${response.status}`)
+        return false
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to estimate cost')
+      return false
     } finally {
       setEstimating(false)
     }
@@ -82,7 +115,7 @@ const DemoQuery: Component = () => {
     setError(null)
 
     try {
-      const response = await fetch('/api/query', {
+      const response = await fetch('/api/execute-query', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -112,12 +145,37 @@ const DemoQuery: Component = () => {
 
   const setExampleQuery = (exampleQuery: string) => {
     setQuery(exampleQuery)
-    setCostEstimate(null) // Clear estimate when query changes
+    resetEstimateState()
   }
 
   const handleQueryInput = (value: string) => {
     setQuery(value)
-    setCostEstimate(null) // Clear estimate when query changes
+    resetEstimateState()
+  }
+
+  const handleExecuteClick = async () => {
+    if (!walletAddress() || !query()) {
+      return
+    }
+
+    setError(null)
+
+    const currentQuery = query()
+    const hasFreshEstimate = costEstimate() && lastEstimatedQuery() === currentQuery
+
+    if (!hasFreshEstimate) {
+      const estimated = await estimateCost()
+      if (!estimated) {
+        return
+      }
+    }
+
+    setShowConfirmation(true)
+  }
+
+  const confirmAndExecute = async () => {
+    setShowConfirmation(false)
+    await executeQuery()
   }
 
   return (
@@ -186,10 +244,10 @@ const DemoQuery: Component = () => {
 
           <button
             class="execute-button"
-            onClick={executeQuery}
-            disabled={loading() || !walletAddress() || !query()}
+            onClick={handleExecuteClick}
+            disabled={loading() || estimating() || !walletAddress() || !query()}
           >
-            {loading() ? 'Executing...' : 'Execute Query'}
+            {executeButtonLabel()}
           </button>
         </div>
       </div>
@@ -206,6 +264,39 @@ const DemoQuery: Component = () => {
           <p class="estimate-info">
             This is an estimate based on query analysis. Actual cost may vary.
           </p>
+        </div>
+      )}
+
+      {showConfirmation() && costEstimate() && (
+        <div class="result-section confirm-section">
+          <h3>Confirm Payment</h3>
+          <p>
+            Estimated rows: <strong>~{Math.round(costEstimate()!.estimatedRows)}</strong>
+          </p>
+          <p>
+            Estimated cost: <strong>${costEstimate()!.estimatedCost.toFixed(6)}</strong>
+          </p>
+          <p class="confirm-note">
+            Review the estimate before triggering the x402 payment flow.
+          </p>
+
+          <div class="confirm-actions">
+            <button
+              class="confirm-button"
+              onClick={confirmAndExecute}
+              disabled={loading()}
+            >
+              {loading() ? 'Executing...' : 'Confirm & Pay'}
+            </button>
+
+            <button
+              class="cancel-button"
+              onClick={() => setShowConfirmation(false)}
+              disabled={loading()}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
 

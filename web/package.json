@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@scan-files/mcp-server": "workspace:*",
+    "ethers": "^6.13.0",
     "pg": "^8.11.3",
     "solid-js": "^1.8.7"
   },

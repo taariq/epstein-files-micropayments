@@ -388,8 +388,43 @@ pre code {
   background: #f0f4ff;
 }
 
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 640px) {
+  .button-group {
+    flex-direction: row;
+  }
+}
+
+.estimate-button {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 6px;
+  border: 2px dashed #667eea;
+  background: #f8f9ff;
+  color: #667eea;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.estimate-button:hover:not(:disabled) {
+  background: #eef2ff;
+  border-color: #4c51bf;
+}
+
+.estimate-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .execute-button {
-  width: 100%;
+  flex: 1;
   padding: 1rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -416,6 +451,11 @@ pre code {
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.estimate-section {
+  border-left: 4px solid #667eea;
+  background: #f0f4ff;
 }
 
 .result-section h3 {
@@ -483,6 +523,62 @@ pre code {
 
 .success-section h3 {
   color: #5cb85c;
+}
+
+.confirm-section {
+  border-left: 4px solid #ffc107;
+  background: #fff8ed;
+}
+
+.confirm-note {
+  font-size: 0.9rem;
+  color: #8d6e63;
+}
+
+.confirm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.confirm-button {
+  padding: 0.9rem 1.5rem;
+  background: #ffc107;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.confirm-button:hover:not(:disabled) {
+  background: #f57c00;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.cancel-button {
+  padding: 0.9rem 1.5rem;
+  border-radius: 6px;
+  border: 2px solid #ddd;
+  background: white;
+  color: #555;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.cancel-button:hover:not(:disabled) {
+  border-color: #999;
+  background: #f8f9fa;
+}
+
+.confirm-button:disabled,
+.cancel-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .result-count {
